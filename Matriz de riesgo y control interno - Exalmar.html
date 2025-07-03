@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Riesgo y Control Interno - Pesquera Exalmar S.A.A.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #003366; /* Azul oscuro corporativo */
+            --secondary-color: #005A9C; /* Azul más brillante */
+            --accent-color: #f39c12; /* Naranja/dorado para acentos */
+            --light-gray: #f4f7f9;
+            --dark-gray: #333333;
+            --text-color: #2c3e50;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            overflow: hidden; /* Evita el scroll de la página entera */
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 40px 60px;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(20px);
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out, visibility 0.6s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1100px;
+        }
+        
+        /* Estilos de diapositivas específicas */
+        .slide.title-slide {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+        }
+        .slide.title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .slide.title-slide h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+        }
+        .slide.title-slide .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 1em;
+        }
+
+        .slide h3 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        /* Acordeón Interactivo */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        .accordion-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        details {
+            width: 100%;
+        }
+
+        summary {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none; /* Oculta el marcador por defecto */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        details[open] summary {
+            background-color: var(--light-gray);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        summary::-webkit-details-marker { display: none; }
+        
+        .component-title {
+            color: var(--primary-color);
+        }
+        .component-amount {
+            font-weight: 400;
+            color: var(--dark-gray);
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        summary::after {
+            content: '+';
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            transition: transform 0.3s ease;
+        }
+        details[open] summary::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 20px 25px;
+            background-color: #ffffff;
+            border-top: 1px solid var(--border-color);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-box {
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .detail-box h4 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .detail-box p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .justification-box { background-color: #e7f3fe; border-left: 4px solid #4a90e2; }
+        .assertion-box { background-color: #e8f5e9; border-left: 4px solid #4caf50; }
+        .risk-box { background-color: #fff3e0; border-left: 4px solid #f39c12; }
+        .control-box { background-color: #e8eaf6; border-left: 4px solid #3f51b5; }
+
+        /* Navegación */
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .nav-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 1rem;
+            color: #999;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .conclusion-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .conclusion-list li {
+            background-color: var(--light-gray);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 5px solid var(--accent-color);
+            font-size: 1.1rem;
+        }
+        .conclusion-list strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <!-- Diapositiva 1: Título -->
+        <section class="slide title-slide active">
+            <div class="slide-content">
+                <h1>Matriz de Riesgo y Control Interno</h1>
+                <h2>Pesquera Exalmar S.A.A.</h2>
+                <p class="subtitle">Análisis Basado en Estados Financieros 2024</p>
+            </div>
+        </section>
+
+        <!-- Diapositiva 2: Estado de Situación Financiera -->
+        <section class="slide">
+            <div class="slide-content">
+                <h3>Estado de Situación Financiera - Cuentas Clave</h3>
+
+                <!-- Propiedades, Planta y Equipo -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">1. Propiedades, Planta y Equipo, neto</span>
+                            <span class="component-amount">USD 207,242 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box">
+                                    <h4>Justificación de Elección</h4>
+                                    <p>Activo no corriente más material (flota y plantas). El juicio en la depreciación y deterioro es complejo.</p>
+                                </div>
+                                <div class="detail-box assertion-box">
+                                    <h4>Aseveraciones</h4>
+                                    <p>Existencia, Valuación, Derechos y Obligaciones, Integridad.</p>
+                                </div>
+                                <div class="detail-box risk-box">
+                                    <h4>⚠️ Riesgo: Sobrevaluación</h4>
+                                    <p>Que los activos no existan, la depreciación sea incorrecta (vidas útiles largas) o no se reconozca deterioro en activos dañados u obsoletos.</p>
+                                </div>
+                                <div class="detail-box control-box">
+                                    <h4>🛡️ Control Interno</h4>
+                                    <p><b>Verificación Física:</b> Inventario físico anual de activos clave.<br><b>Revisión de Vidas Útiles:</b> Análisis anual de vidas útiles y valores residuales.<br><b>Pruebas de Deterioro:</b> Protocolo para evaluar indicios de deterioro.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Crédito Mercantil -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">2. Crédito Mercantil</span>
+                            <span class="component-amount">USD 113,342 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                             <div class="detail-grid">
+                                <div class="detail-box justification-box">
+                                    <h4>Justificación de Elección</h4>
+                                    <p>Importe muy significativo, 100% basado en estimación (prueba de deterioro). "Asunto Clave de Auditoría" por BDO.</p>
+                                </div>
+                                <div class="detail-box assertion-box">
+                                    <h4>Aseveraciones</h4>
+                                    <p>Valuación.</p>
+                                </div>
+                                <div class="detail-box risk-box">
+                                    <h4>⚠️ Riesgo: Sobrevaluación Crítica</h4>
+                                    <p>Que el valor recuperable sea menor al valor en libros por proyecciones de flujo de caja demasiado optimistas o tasas de descuento incorrectas.</p>
+                                </div>
+                                <div class="detail-box control-box">
+                                    <h4>🛡️ Control Interno</h4>
+                                    <p><b>Proceso Formal:</b> Prueba de deterioro anual documentada.<br><b>Supervisión Directorio:</b> Revisión y aprobación de supuestos clave por Comité/Directorio.<br><b>Análisis de Sensibilidad.</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <!-- Intangibles -->
+                <div class="accordion-item">
+                     <details>
+                        <summary>
+                            <span class="component-title">3. Intangibles, neto</span>
+                            <span class="component-amount">USD 119,994 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                             <div class="detail-grid">
+                                <div class="detail-box justification-box">
+                                    <h4>Justificación de Elección</h4>
+                                    <p>Corresponde a permisos de pesca y licencias (vida útil indefinida), críticos para operar. El deterioro es un riesgo clave.</p>
+                                </div>
+                                <div class="detail-box assertion-box">
+                                    <h4>Aseveraciones</h4>
+                                    <p>Existencia, Valuación, Derechos y Obligaciones.</p>
+                                </div>
+                                <div class="detail-box risk-box">
+                                    <h4>⚠️ Riesgo: Deterioro no reconocido</h4>
+                                    <p>Un cambio en regulaciones (ej. cuotas de pesca) podría afectar el valor y no ser reconocido. Riesgo legal sobre titularidad.</p>
+                                </div>
+                                <div class="detail-box control-box">
+                                    <h4>🛡️ Control Interno</h4>
+                                    <p><b>Validación Legal:</b> Verificación periódica de titularidad y vigencia de licencias.<br><b>Prueba de Deterioro Anual:</b> Inclusión de intangibles en la prueba de deterioro anual.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Existencias -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">4. Existencias, neto</span>
+                            <span class="component-amount">USD 127,557 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>Activo corriente más grande. La valuación de la harina de pescado (commodity) depende del VNR, que es volátil.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Existencia, Valuación.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Valuación Incorrecta</h4><p>Que las existencias estén registradas por encima de su VNR debido a una caída en el precio o aumento de costos. Riesgo de obsolescencia.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Toma de Inventario Físico:</b> Conteo físico periódico.<br><b>Cálculo de VNR:</b> Procedimiento periódico para comparar costo vs. VNR.<br><b>Análisis de Rotación:</b> Reportes de antigüedad de inventarios.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <!-- Otras Cuentas por Cobrar -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">5. Otras Cuentas por Cobrar</span>
+                            <span class="component-amount">USD 93,608 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>Monto muy significativo. Principalmente anticipos a armadores pesqueros, lo cual representa un riesgo de recuperabilidad inherente y alto.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Valuación, Existencia, Derechos.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Incobrabilidad</h4><p>Que los anticipos entregados a armadores no se recuperen porque estos no entregan el pescado prometido o entregan menos de lo esperado.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Política de Anticipos:</b> Establece límites de crédito/anticipo.<br><b>Seguimiento y Compensación:</b> Sistema para rastrear los anticipos.<br><b>Garantías:</b> Exigencia de garantías para montos significativos.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Deuda Financiera (agrupado) -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">7 & 8. Deuda Financiera (Pasivos)</span>
+                            <span class="component-amount">USD 244,797 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>Pasivos más significativos. Financian capital de trabajo y largo plazo. El incumplimiento de covenants podría acelerar el pago.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Integridad, Clasificación, Revelación, Exactitud.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Incumplimiento de Covenants</h4><p>Que la empresa no cumpla con los ratios financieros, lo que podría llevar a que toda la deuda se vuelva exigible. Riesgo de clasificación incorrecta y revelación incompleta.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Monitoreo de Covenants:</b> Cálculo y monitoreo periódico de ratios.<br><b>Reporte a Gerencia:</b> Sistema de alerta temprana.<br><b>Revisión de Contratos:</b> Para identificar cláusulas y vencimientos.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Diapositiva 3: Estado de Resultados -->
+        <section class="slide">
+            <div class="slide-content">
+                <h3>Estado de Resultados - Cuentas Clave</h3>
+
+                <!-- Ventas -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">1. Ventas (Ingresos)</span>
+                            <span class="component-amount">USD 456,503 mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>Partida más importante y principal motor del negocio. El reconocimiento en exportaciones (INCOTERMS) es un área de alto riesgo.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Ocurrencia, Corte (Cut-off), Exactitud.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Reconocimiento Prematuro</h4><p>Registrar la venta antes de que se haya transferido el control del bien al cliente. Riesgo de ventas ficticias.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Política de Ingresos (NIIF 15):</b> Política documentada.<br><b>Segregación de Funciones:</b> Venta, despacho y facturación.<br><b>Control de Documentos:</b> Correlación de órdenes, guías y facturas.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <!-- Costo de Ventas -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">2. Costo de Ventas</span>
+                            <span class="component-amount">USD (340,490) mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>Segundo rubro más grande, ligado a la valuación de existencias y costos de producción, que son complejos.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Exactitud, Corte (Cut-off), Integridad.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Costos Incorrectos</h4><p>Una incorrecta asignación de costos de producción distorsiona tanto el costo de ventas como el valor final de las existencias. Riesgo de corte.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Sistema de Costeo Robusto:</b> Sistema de costeo aplicado consistentemente.<br><b>Análisis de Márgenes:</b> Comparación periódica de márgenes brutos para identificar variaciones inesperadas.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Impuesto a la Renta -->
+                <div class="accordion-item">
+                    <details>
+                        <summary>
+                            <span class="component-title">5. Impuesto a la Renta</span>
+                            <span class="component-amount">USD (17,805) mil</span>
+                        </summary>
+                        <div class="accordion-content">
+                            <div class="detail-grid">
+                                <div class="detail-box justification-box"><h4>Justificación</h4><p>El cálculo del impuesto diferido es complejo y se basa en estimaciones sobre la recuperabilidad futura de las diferencias temporarias.</p></div>
+                                <div class="detail-box assertion-box"><h4>Aseveraciones</h4><p>Exactitud, Valuación.</p></div>
+                                <div class="detail-box risk-box"><h4>⚠️ Riesgo: Cálculo Incorrecto del Impuesto Diferido</h4><p>Identificación errónea de diferencias temporarias o aplicación de una tasa impositiva incorrecta, llevando a un pasivo o activo diferido erróneo.</p></div>
+                                <div class="detail-box control-box"><h4>🛡️ Control Interno</h4><p><b>Cálculo Especializado:</b> Personal con experiencia en tributación.<br><b>Revisión por Asesores Externos:</b> Revisión periódica del cálculo por asesores tributarios.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Diapositiva 4: Conclusiones -->
+        <section class="slide">
+            <div class="slide-content">
+                <h3>Conclusiones y Riesgos Clave</h3>
+                <ul class="conclusion-list">
+                    <li>
+                        <strong>Riesgo de Valuación de Activos Intangibles (Goodwill y Licencias):</strong> Con un valor combinado de <strong>USD 233 millones</strong>, su valor depende enteramente de proyecciones futuras y del marco regulatorio. Un deterioro no reconocido tendría un impacto masivo en el patrimonio.
+                    </li>
+                    <li>
+                        <strong>Gestión de la Deuda y Covenants:</strong> La deuda financiera de <strong>USD 245 millones</strong> es la principal fuente de financiamiento. El monitoreo estricto de los covenants es vital para evitar una reclasificación a corto plazo o la aceleración del pago, lo que generaría una crisis de liquidez.
+                    </li>
+                    <li>
+                        <strong>Volatilidad en Existencias y Costos:</strong> Las existencias (<strong>USD 128M</strong>) y el Costo de Ventas (<strong>USD 340M</strong>) son vulnerables a la fluctuación del precio de la harina de pescado (VNR). Un sistema de costeo y valuación robusto es fundamental para presentar márgenes reales.
+                    </li>
+                    <li>
+                        <strong>Recuperabilidad de Anticipos a Terceros:</strong> Las "Otras Cuentas por Cobrar" (<strong>USD 94M</strong>), principalmente anticipos a armadores, presentan un alto riesgo de incobrabilidad que debe ser mitigado con políticas de crédito y garantías sólidas.
+                    </li>
+                    <li>
+                        <strong>Reconocimiento de Ingresos:</strong> Con <strong>USD 457 millones</strong> en ventas, es crucial la correcta aplicación de la NIIF 15, especialmente en exportaciones con diversos INCOTERMS, para evitar registrar ingresos de forma prematura o incorrecta.
+                    </li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Diapositiva 5: Final -->
+        <section class="slide title-slide">
+            <div class="slide-content">
+                <h1>Preguntas y Discusión</h1>
+                <h2 style="font-weight: 300;">Gracias por su atención.</h2>
+            </div>
+        </section>
+    </div>
+
+    <div class="navigation">
+        <button id="prevBtn" class="nav-btn">Anterior</button>
+        <button id="nextBtn" class="nav-btn">Siguiente</button>
+    </div>
+    
+    <div id="slideCounter" class="slide-counter"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const slideCounter = document.getElementById('slideCounter');
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+                
+                // Actualizar estado de botones
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === slides.length - 1;
+                
+                // Actualizar contador
+                slideCounter.textContent = `${index + 1} / ${slides.length}`;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            });
+
+            // Teclas de flecha para navegar
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    nextBtn.click();
+                } else if (e.key === 'ArrowLeft') {
+                    prevBtn.click();
+                }
+            });
+
+            // Iniciar la presentación
+            showSlide(currentSlide);
+        });
+    </script>
+
+</body>
+</html>
